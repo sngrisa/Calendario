@@ -1,0 +1,65 @@
+#containerContact {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+}
+
+#formContact {
+    padding: 40px !important;
+    border-radius: 10px !important;
+    @apply bg-white text-black;
+}
+
+.sectionContact{
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    height: 100vh !important;
+    font-family: Arial, sans-serif !important;
+    background-color: #FF3CAC !important;
+    background-image: linear-gradient(225deg, #FF3CAC 0%, #784BA0 50%, #2B86C5 100%) !important;
+    background-size: cover !important;
+    background-position: center !important;
+}
+
+.formContact h2 {
+    margin-bottom: 20px;
+}
+
+.formContact label {
+    display: block;
+    margin: 10px 0 5px;
+    @apply flex items-center justify-center font-bold;
+}
+
+.formContact button{
+    width: 100% !important;
+    border-radius: 5px !important;
+    border: none !important;
+    @apply bg-purple-700 text-white hover:bg-purple-800;
+}
+
+.formContact input{
+    width: 100% !important;    
+    padding: 10px !important;
+    border: 1px solid #444 !important;
+    background-color: whitesmoke !important;
+    border-radius: 5px !important;
+    margin-bottom: 20px !important;
+    color: black !important;
+}
+
+.formContact textarea{
+    width: 100% !important;
+    resize: none !important;
+    padding: 10px !important;
+    background-color: whitesmoke !important;
+    margin-bottom: 20px !important;
+    border: 1px solid #444 !important;
+    border-radius: 5px !important;
+    color: black !important;
+}
+
+.formContact input::placeholder {
+    @apply text-slate-700;
+}

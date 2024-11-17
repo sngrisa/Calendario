@@ -1,0 +1,105 @@
+.section-login {
+    font-family: Arial, sans-serif;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #FF3CAC;
+    background-image: linear-gradient(225deg, #FF3CAC 0%, #784BA0 50%, #2B86C5 100%);
+}
+
+.container-login {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    justify-content: space-between;
+}
+
+
+.signup-form {
+    padding: 40px;
+    border-radius: 10px;
+    width: 400px;
+    @apply bg-white text-black;
+}
+
+.signup-form h2 {
+    margin-bottom: 20px;
+}
+
+.signup-form label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+.signup-form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    background-color: whitesmoke;
+    border: 1px solid #444;
+    color: black;
+    border-radius: 5px;
+}
+
+.signup-form input::placeholder {
+    color: #bbb;
+}
+
+.terms {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.terms input {
+    margin-right: 10px;
+}
+
+.signup-form button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    @apply bg-purple-700;
+}
+
+.signup-form .social-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #444;
+    border: none;
+    color: black;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    margin-top: 7%;
+}
+
+
+.signup-form .social-btn.google-btn {
+    font-weight: bold;
+    @apply bg-blue-600 text-white;
+}
+
+.social-btn.google-btn:hover {
+    font-weight: bold;
+    @apply bg-blue-800 text-white;
+}
+
+.signup-form .social-btn.github-btn {
+    background-color: #333;
+}
+
+.signup-form a {
+    color: #007BFF;
+    text-decoration: none;
+}
+
+.signup-form p {
+    text-align: center;
+}

@@ -1,0 +1,96 @@
+.modal-fondo {
+    background-color: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ReactModalPortal .ReactModal__Overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s ease-in-out;
+    z-index: 999;
+}
+
+.ReactModalPortal .ReactModal__Overlay--after-open {
+    opacity: 1;
+}
+
+.ReactModalPortal .ReactModal__Overlay--before-close {
+    opacity: 0;
+}
+
+.modal-addevent {
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    max-width: 90%;
+    width: 500px;
+    margin: auto;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.modal-addevent h1 {
+    color: #333;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .modal-addevent {
+        width: 95%; 
+    }
+}
+
+.date-time-picker:focus {
+    outline: none !important; 
+}
+
+.date-time-picker_wrapper {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 8px; 
+    transition: border-color 0.3s; 
+}
+
+.date-time-picker_wrapper:hover {
+    border-color: #007BFF;
+}
+
+.notes {
+    resize: none !important;
+}
+
+button {
+    transition: background-color 0.3s, transform 0.2s;
+    border-radius: 5px;
+    padding: 10px 15px; 
+}
+
+button:hover {
+    transform: scale(1.05);
+    @apply bg-purple-600 text-white;
+}
+
+.rbc-calendar {
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.rbc-event {
+    border-radius: 4px;
+    transition: transform 0.2s, background-color 0.2s;
+    @apply bg-purple-700;
+}
+
+.rbc-event:hover {
+    transform: scale(1.05);
+    color: white;
+    @apply bg-purple-700;
+}

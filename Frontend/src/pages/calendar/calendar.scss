@@ -1,0 +1,64 @@
+#backgroundCalendar {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    min-height: 100vh;
+    background-color: #FF3CAC !important;
+    background-image: linear-gradient(225deg, #FF3CAC 0%, #784BA0 50%, #2B86C5 100%) !important;
+    background-size: cover !important;
+    background-position: center !important;
+    z-index: -1;
+}
+
+.rbc-calendar {
+    background-color: #f9f9f9; // Fondo más claro
+    border-radius: 8px;
+    overflow: hidden;
+    padding: 12px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+
+    .rbc-header {
+        color: white;
+        font-weight: bold;
+        padding: 20px;
+        border-radius: 5px !important;
+        @apply bg-purple-600;
+    }
+
+    .rbc-event {
+        padding: 20px;
+        transition: transform 0.2s, background-color 0.2s;
+        border-radius: 10px !important;
+        @apply bg-purple-800 !important;
+        &:hover {
+            transform: scale(1.05);
+            color: white;
+            @apply bg-purple-950 text-white;
+        }
+    }
+
+    .rbc-day-slot {
+        border: 1px solid #eaeaea; // Bordes más visibles
+    }
+
+    // Estilos para el botón de añadir evento
+    .add-event-button {
+        background-color: #28a745; // Color verde
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #218838; // Color más oscuro al pasar el mouse
+        }
+    }
+}
+
+#modal {
+    -webkit-box-shadow: 3px 6px 5px 0px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 3px 6px 5px 0px rgba(0, 0, 0, 0.75);
+    box-shadow: 3px 6px 5px 0px rgba(0, 0, 0, 0.75);
+    @apply bg-white !important;
+}
