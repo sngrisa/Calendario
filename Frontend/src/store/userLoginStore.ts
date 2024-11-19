@@ -2,8 +2,8 @@ import { create } from "zustand";
 
 interface UserStore {
   token: string | null;
-  user: { name: string; email: string } | null;
-  login: (token: string, user: { name: string; email: string }) => void;
+  user: { _id: string | number, username: string; email: string } | null;
+  login: (token: string, user: { _id: string | number, username: string; email: string }) => void;
   logout: () => void;
 }
 

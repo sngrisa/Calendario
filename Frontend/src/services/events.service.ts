@@ -1,15 +1,18 @@
-import { IEventCalendar } from "../pages/calendar/calendar";
+import { ICalendarEvent } from "../pages/calendar/calendar";
 
-const url: string = "http://localhost:7000/events";
+const url: string = "http://localhost:7000/api/events";
 
 const handleResponse = async (response: Response) => {
     if (!response.ok) {
-        throw new Error(`API Error: ${response.statusText}`);
+        const errorData = await response.json();
+        throw new Error(errorData.msg || 'Unknown error');
     }
-    return await response.json();
-}
 
-const postEvent = async (event: IEventCalendar) => {
+    return await response.json();
+};
+
+const postEvent = async (event: any) => {
+    console.log(event);
     try {
         const response: Response = await fetch(`${url}`, {
             method: 'POST',
@@ -25,21 +28,24 @@ const postEvent = async (event: IEventCalendar) => {
     }
 }
 
-const putEvent = async (event: IEventCalendar, idEvent: string | number) => {
+const putEvent = async (event: ICalendarEvent) => {
     try {
-        const response: Response = await fetch(`${url}/${idEvent}`, {
+        const { _id, ...eventData } = event;
+        const response: Response = await fetch(`${url}/${_id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(event),
+            body: JSON.stringify(eventData),
         });
+
         return handleResponse(response);
     } catch (err: any) {
         console.error('Error updating event:', err);
         throw err;
     }
 }
+
 
 const deleteEvent = async (idEvent: string | number) => {
     try {
@@ -54,22 +60,28 @@ const deleteEvent = async (idEvent: string | number) => {
         console.error('Error deleting event:', err);
         throw err;
     }
-}
+};
 
-const getEvents = async () => {
+const getUserEvents = async (_id: string | number | undefined) => {
     try {
-        const response: Response = await fetch(`${url}`, {
+        const response = await fetch(`${url}/user/${_id}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             },
         });
-        return handleResponse(response);
-    } catch (err: any) {
+
+        if (!response.ok) {
+            throw new Error('Error fetching events');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (err) {
         console.error('Error fetching events:', err);
         throw err;
     }
-}
+};
 
 const getEventsById = async (idEvent: string | number) => {
     try {
@@ -79,11 +91,12 @@ const getEventsById = async (idEvent: string | number) => {
                 'Content-Type': 'application/json',
             },
         });
+
         return handleResponse(response);
     } catch (err: any) {
         console.error('Error fetching event by ID:', err);
         throw err;
     }
-}
+};
 
-export { getEvents, postEvent, putEvent, deleteEvent, getEventsById };
+export { getUserEvents, postEvent, putEvent, deleteEvent, getEventsById };

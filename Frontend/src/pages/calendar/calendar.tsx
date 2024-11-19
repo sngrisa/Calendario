@@ -11,21 +11,34 @@ import ModalCalendar from "./modalCalendar/modalCalendar";
 import { useStore } from "../../store/useStore";
 import ModalCalendarDetails from "./modalCalendarDetails/modalCalendarDetails";
 import "./calendar.scss";
+import { useUserLoginStore } from "../../store/userLoginStore";
 
 moment.locale('es');
 const localizer = momentLocalizer(moment);
 
-export interface IEventCalendar extends Event {
-  id: string | number;
-  user?: { name: string };
+export interface IUserEvent {
+  _id: string | any;
+  username: string | any;
+  email: string | any;
+}
+
+export interface ICalendarEvent {
+  _id: string | number;
+  title: string;
+  notes: string | any;
+  start: Date;
+  end: Date;
+  user: IUserEvent;
 }
 
 const CalendarComponent = ({ toggleNavbarFooter }: { toggleNavbarFooter: any }) => {
-  const { openModalDetails, openModal, events } = useStore();
+  const { openModalDetails, openModal, events, addEvent, fetchEvents } = useStore();
+  const { user } = useUserLoginStore();
   const [lastView, setLastView] = useState(localStorage.getItem('lastChange') || 'month');
 
   useEffect(() => {
     toggleNavbarFooter();
+    fetchEvents(user?._id);  
     return () => {
       toggleNavbarFooter();
     };
@@ -36,12 +49,11 @@ const CalendarComponent = ({ toggleNavbarFooter }: { toggleNavbarFooter: any }) 
   }, [events]);
 
 
-
   const onHandledClick = () => {
     openModal();
   };
 
-  const onSelectedItem = (event: any) => {
+  const onSelectedItem = (event: ICalendarEvent) => {
     useStore.getState().setSelectedEvent(event);
     openModalDetails();
   };

@@ -83,8 +83,9 @@ const loginUsers = async (req: Request, res: Response): Promise<Response> => {
     return res.status(200).json({
       ok: true,
       msg: "Welcome User to the System",
-      _idUser: dbUser.id,
+      _id: dbUser.id,
       email: dbUser.email,
+      name: dbUser.username,
       token
     });
 
@@ -119,7 +120,7 @@ const getUsersByEmail = async (req: Request, res: Response): Promise<Response> =
   const { email } = req.params;
   try {
     const resp = await Users.find({ email });
-    return res.status(200).json({ msg: resp });
+    return res.status(200).json({ ...resp });
   } catch (err) {
     return res.status(500).json({ ok: false, msg: err.message });
   }

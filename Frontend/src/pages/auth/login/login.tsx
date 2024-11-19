@@ -4,7 +4,7 @@ import { IoLogInSharp } from "react-icons/io5";
 import { Input } from "../../../components/ui/input";
 import { RiLoginCircleFill } from "react-icons/ri";
 import { useEffect } from "react";
-import { loginUsers } from "../../../services/users.service";
+import { getUsersByEmail, loginUsers } from "../../../services/users.service";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router";
 import { useUserLoginStore } from "../../../store/userLoginStore";
@@ -13,7 +13,7 @@ const Login = ({ toggleNavbarFooter }: { toggleNavbarFooter: any }) => {
   const navigate = useNavigate();
 
   const { login } = useUserLoginStore();
-  
+
   useEffect(() => {
     toggleNavbarFooter();
     return () => {
@@ -26,16 +26,18 @@ const Login = ({ toggleNavbarFooter }: { toggleNavbarFooter: any }) => {
     try {
       const form = event.target as HTMLFormElement;
       const email = form.email.value;
+      const searchId = await getUsersByEmail(email);
+      const _id = searchId[0]._id;
       const password = form.password.value;
-      const userData = { email, password };
-      
+      const userData = { _id, email, password };
+
       const response = await loginUsers(userData);
 
       if (response.ok) {
 
         localStorage.setItem("tokenUser", response.token);
         console.log(localStorage.getItem('tokenUser'));
-        login(response.token, { name: response.name, email: response.email });
+        login(response.token, { _id: response._id, name: response.name, email: response.email });
 
         Swal.fire({
           position: "center",

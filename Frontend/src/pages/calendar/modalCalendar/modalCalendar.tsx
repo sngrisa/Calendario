@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Modal from 'react-modal';
 import { MdError } from "react-icons/md";
-import { useStore } from './../../../store/useStore'; // Ajusta la ruta
+import { useStore } from './../../../store/useStore';
 import { MdEventRepeat, MdOutlineEvent, MdEvent, MdOutlineSubtitles } from "react-icons/md";
 import { FaSave } from "react-icons/fa";
 import { IoAddCircle } from "react-icons/io5";
@@ -13,25 +13,18 @@ import 'react-calendar/dist/Calendar.css';
 import 'react-clock/dist/Clock.css';
 import moment from 'moment';
 import { Alert, AlertDescription, AlertTitle } from "./../../../components/ui/alert";
-import { Button } from './../../../components/ui/button'; // Ajusta la ruta
+import { Button } from './../../../components/ui/button';
 import "./modalCalendar.scss";
 import Swal, { SweetAlertIcon } from 'sweetalert2';
 import { RiLogoutCircleFill } from "react-icons/ri";
 import { BiCalendarEvent } from "react-icons/bi";
 import { useUserLoginStore } from '../../../store/userLoginStore';
 import { useNavigate } from 'react-router';
+import { ICalendarEvent } from '../calendar';
 
 
 type ValuePiece = Date | any;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
-
-export interface IEventCalendarModal {
-    _id?: number | string;
-    title: string;
-    notes: string;
-    start: Date;
-    end: Date;
-}
 
 const customStyles = {
     content: {
@@ -61,14 +54,14 @@ const ModalCalendar = () => {
     const navigate = useNavigate();
 
 
-    const [formValues, setFormValues] = useState<IEventCalendarModal>({
+    const [formValues, setFormValues] = useState<any>({
         title: "",
         notes: "",
         start: now.toDate(),
         end: nowPlus.toDate()
     });
 
-    const { title, notes, start, end } = formValues;
+    const { title, notes } = formValues;
 
 
     const afterOpenModal = (): void => {
@@ -132,18 +125,17 @@ const ModalCalendar = () => {
             return;
         }
 
-        const newEvent: any = {
+        const newEvent: ICalendarEvent = {
             _id: id,
             title: formValues.title,
-            allDay: false,
             start: memoStart.toDate(),
             end: memoEnd.toDate(),
-            bgcolor: 'darkblue',
             notes: formValues.notes,
             user: {
-                _id: '1',
-                name: 'Fernando Stetmann',
-            },
+                _id: user?._id,
+                username: user?.username,
+                email: user?.email,
+            }
         };
 
         addEvent(newEvent);

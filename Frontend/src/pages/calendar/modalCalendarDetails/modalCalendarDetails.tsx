@@ -14,6 +14,7 @@ import "./modalCalendarDetails.scss";
 import { GrUpdate } from "react-icons/gr";
 import Swal from "sweetalert2";
 import { Button } from '../../../components/ui/button';
+import { IuserData } from '../../../services/interfaces/userData.interface';
 
 
 type ValuePiece = Date | any;
@@ -28,7 +29,7 @@ export interface IEventCalendarModal {
 }
 
 const customStyles = {
-    content:{
+    content: {
         width: '100%',
         maxWidth: '500px',
         borderRadius: '10px',
@@ -73,7 +74,6 @@ const ModalCalendarDetails = () => {
             });
         }
     }, [selectedEvent]);
-
 
     const afterOpenModal = (): void => {
         if (subtitleRef.current) {
@@ -245,17 +245,17 @@ const ModalCalendarDetails = () => {
                         </div>
                         <div className='grid grid-cols-2'>
                             <Button
-                                type="submit" style={{borderRadius: '5px'}}
+                                type="submit" style={{ borderRadius: '5px' }}
                                 className="w-full bg-green-700 text-white font-semibold py-2 rounded-lg flex items-center justify-center hover:bg-green-800 transition duration-200"
                             >
                                 <span className='mr-2 font-bold text-lg'><GrUpdate /></span>Actualizar Evento
                             </Button>
                             <Button
                                 type='button' onClick={handleDeleteEvent}
-                                style={{borderRadius: '5px'}}
+                                style={{ borderRadius: '5px' }}
                                 className="w-full bg-red-700 text-white font-semibold py-2 rounded-lg flex items-center justify-center hover:bg-red-800 transition duration-200"
                             >
-                                <span className='mr-2 font-bold text-lg' style={{borderRadius: '5px'}}><GrUpdate /></span>Eliminar Evento
+                                <span className='mr-2 font-bold text-lg' style={{ borderRadius: '5px' }}><GrUpdate /></span>Eliminar Evento
                             </Button>
                         </div>
                     </form>
