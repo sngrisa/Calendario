@@ -7,7 +7,7 @@ const getToken = (): string | null => {
 }
 
 const validateToken = async () => {
-    const token = getToken(); 
+    const token = getToken();
 
     if (!token) {
         console.error("Token is missing. Please log in.");
@@ -18,7 +18,6 @@ const validateToken = async () => {
 
     try {
         const response = await axios.get(`${url}/calendar`);
-        
         return { valid: true, data: response.data };
     } catch (err: any) {
         if (err.response && err.response.status === 401) {

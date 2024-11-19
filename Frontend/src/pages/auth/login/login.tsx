@@ -2,7 +2,6 @@ import { Button } from "../../../components/ui/button";
 import "./login.scss";
 import { IoLogInSharp } from "react-icons/io5";
 import { Input } from "../../../components/ui/input";
-import { FaGoogle } from "react-icons/fa";
 import { RiLoginCircleFill } from "react-icons/ri";
 import { useEffect } from "react";
 import { loginUsers } from "../../../services/users.service";

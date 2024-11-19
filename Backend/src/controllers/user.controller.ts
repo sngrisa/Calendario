@@ -1,7 +1,9 @@
 import { Request, Response } from "express";
 import Users from "./../models/user.model";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import { generateJWT } from "../helpers/GenerateJWT";
+import mongoose from "mongoose";
 
 const createUsers = async (req: Request, res: Response): Promise<Response> => {
   try {
@@ -61,7 +63,7 @@ const loginUsers = async (req: Request, res: Response): Promise<Response> => {
   try {
     const dbUser = await Users.findOne({ email });
 
-    if (!dbUser) {      
+    if (!dbUser) {
       return res.status(400).json({
         ok: false,
         msg: "User not found!!!",
@@ -76,7 +78,7 @@ const loginUsers = async (req: Request, res: Response): Promise<Response> => {
       });
     }
 
-    const token = await generateJWT(dbUser._id, dbUser.email); 
+    const token = await generateJWT(dbUser._id, dbUser.email);
 
     return res.status(200).json({
       ok: true,
@@ -237,6 +239,7 @@ const deleteUsers = async (req: Request, res: Response): Promise<Response> => {
     });
   }
 };
+
 
 export {
   createUsers,

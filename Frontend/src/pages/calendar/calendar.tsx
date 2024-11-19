@@ -35,6 +35,8 @@ const CalendarComponent = ({ toggleNavbarFooter }: { toggleNavbarFooter: any }) 
     localStorage.setItem('events', JSON.stringify(events));
   }, [events]);
 
+
+
   const onHandledClick = () => {
     openModal();
   };

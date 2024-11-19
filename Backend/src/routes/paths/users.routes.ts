@@ -2,6 +2,7 @@ import express from 'express';
 import { check } from "express-validator";
 import { validateFields } from '../../helpers/ValidateFields';
 import { getUsers, createUsers, updateUsers, deleteUsers, getUsersById, getUsersByEmail, getUsersByStatus, getUsersByUsername, loginUsers } from '../../controllers/user.controller';
+import { validateJWT } from '../../helpers/ValidateJWT';
 
 const UsersRouter = express.Router();
 
@@ -21,7 +22,7 @@ UsersRouter.put('/id/:_id', [validateFields, check('email', 'The email of user i
 
 UsersRouter.delete('/:_id', [check('_id', 'The id of username is required and must be validated').isLength({ min: 1 }), validateFields], deleteUsers);
 
-UsersRouter.post("/login", [check('email', 'The email is required and must be validated').isEmail(), check('password', 'The password is required').isLength({ min: 8 }), validateFields], loginUsers)
+UsersRouter.post("/login", [check('email', 'The email is required and must be validated').isEmail(), check('password', 'The password is required').isLength({ min: 8 }), validateFields], loginUsers);
 
 export { UsersRouter };
 

@@ -18,6 +18,8 @@ import "./modalCalendar.scss";
 import Swal, { SweetAlertIcon } from 'sweetalert2';
 import { RiLogoutCircleFill } from "react-icons/ri";
 import { BiCalendarEvent } from "react-icons/bi";
+import { useUserLoginStore } from '../../../store/userLoginStore';
+import { useNavigate } from 'react-router';
 
 
 type ValuePiece = Date | any;
@@ -55,6 +57,9 @@ const ModalCalendar = () => {
     const [titleError, setTitleError] = useState<string | null>(null);
     const [notesError, setNotesError] = useState<string | null>(null);
     const [id, setId] = useState<number>(0);
+    const { logout, user } = useUserLoginStore();
+    const navigate = useNavigate();
+
 
     const [formValues, setFormValues] = useState<IEventCalendarModal>({
         title: "",
@@ -117,13 +122,11 @@ const ModalCalendar = () => {
         const memoStart = moment(formValues.start);
         const memoEnd = moment(formValues.end);
 
-        // Validar que la fecha de inicio sea anterior a la de fin
         if (memoStart.isSameOrAfter(memoEnd)) {
             alertInfo("La fecha de inicio debe ser anterior a la fecha de fin", "Verifique las fechas ingresadas", "error");
             return;
         }
 
-        // Validar que el título tenga al menos 2 caracteres
         if (title.trim().length < 2) {
             alertInfo("El campo de título no puede estar vacío", "El título debe tener al menos 2 caracteres", "error");
             return;
@@ -133,8 +136,8 @@ const ModalCalendar = () => {
             _id: id,
             title: formValues.title,
             allDay: false,
-            start: memoStart.toDate(), // Asegúrate de que esto sea un objeto Date válido
-            end: memoEnd.toDate(), // Asegúrate de que esto sea un objeto Date válido
+            start: memoStart.toDate(),
+            end: memoEnd.toDate(),
             bgcolor: 'darkblue',
             notes: formValues.notes,
             user: {
@@ -157,6 +160,11 @@ const ModalCalendar = () => {
         });
     };
 
+    const handleLogout = () => {
+        logout();
+        navigate('/');
+    }
+
     return (
         <>
             <div className="lg:flex lg:h-full lg:flex-col">
@@ -165,12 +173,16 @@ const ModalCalendar = () => {
                         <span className='mr-2 text-4xl text-slate-100'><BiCalendarEvent /></span>Calendar
                     </h1>
                     <div className="flex items-center">
+                        <div className='flex'>
+                            <h3 className='text-white font-bold'>{user?.email}</h3>
+                        </div>
                         <div className="hidden md:ml-4 md:flex md:items-center">
+
                             <div className="relative">
-                                <a href='/' className='flex items-center'><Button type="button" style={{ height: '38px', borderRadius: '5px' }} className="flex text-white bg-red-700 items-center gap-x-1.5 rounded-md px-3 py-2 text-sm font-semibold shadow-sm  hover:bg-red-500" id="menu-button" aria-expanded="false" aria-haspopup="true">
+                                <Button type="button" style={{ height: '38px', borderRadius: '5px' }} onClick={handleLogout} className="flex text-white bg-red-700 items-center gap-x-1.5 rounded-md px-3 py-2 text-sm font-semibold shadow-sm  hover:bg-red-500" id="menu-button" aria-expanded="false" aria-haspopup="true">
                                     <span><RiLogoutCircleFill /></span>Cerrar Sesión
                                 </Button>
-                                </a>
+
                             </div>
                             <div className="ml-6 h-6 w-px bg-gray-300"></div>
                             <Button type="button" className="ml-6 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 flex items-center" style={{ borderRadius: '5px' }} onClick={openModal}><span className='w-auto flex items-center mr-2'><IoAddCircle /></span> Añadir Evento</Button>

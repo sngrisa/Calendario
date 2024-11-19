@@ -2,6 +2,8 @@ import { IuserData } from "./interfaces/userData.interface";
 
 const url: string = "http://localhost:7000/api";
 
+let userDataDetails: any = {};
+
 const postUsers = async (userData: IuserData) => {
     try {
         const reponse: any = await fetch(`${url}/users`, {
@@ -52,6 +54,22 @@ const getUsersById = async (_id: string | number) => {
     }
 }
 
+const getUsersByEmail = async (email: string) => {
+    try {
+        const reponse: any = await fetch(`${url}/users/email/${email}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        if (!reponse.ok) { throw new Error('Error to get usesr from database') };
+        return await reponse.json();
+    } catch (err: any) {
+        console.error(err);
+        throw err;
+    }
+}
+
 const loginUsers = async (userData: IuserData) => {
     try {
         const response = await fetch(`${url}/users/login`, {
@@ -74,4 +92,5 @@ const loginUsers = async (userData: IuserData) => {
     }
 };
 
-export { getUsers, postUsers, loginUsers, getUsersById };
+
+export { getUsers, postUsers, loginUsers, getUsersById, getUsersByEmail };

@@ -8,17 +8,17 @@ interface UserStore {
 }
 
 const useUserLoginStore = create<UserStore>((set) => ({
-  token: localStorage.getItem('tokenUser'), // Recupera el token del localStorage
+  token: localStorage.getItem('tokenUser'),
   user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') as string) : null,
   login: (token, user) => {
     set({ token, user });
     localStorage.setItem('tokenUser', token);
-    localStorage.setItem('user', JSON.stringify(user)); // Guarda el usuario en el localStorage
+    localStorage.setItem('user', JSON.stringify(user));
   },
   logout: () => {
     set({ token: null, user: null });
     localStorage.removeItem('tokenUser');
-    localStorage.removeItem('user'); // Elimina los datos del usuario
+    localStorage.removeItem('user');
   },
 }));
 
