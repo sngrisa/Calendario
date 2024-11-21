@@ -1,4 +1,3 @@
-/* import "./calendar.scss"; */
 import { useEffect, useState } from "react";
 import moment from "moment";
 import "moment/locale/es";
@@ -11,9 +10,12 @@ import ModalCalendar from "./modalCalendar/modalCalendar";
 import { useStore } from "../../store/useStore";
 import ModalCalendarDetails from "./modalCalendarDetails/modalCalendarDetails";
 import "./calendar.scss";
+import { io } from 'socket.io-client';
 
 moment.locale('es');
 const localizer = momentLocalizer(moment);
+const urlBackend: string = "http://localhost:7000";
+const socketIo = io(urlBackend);
 
 export interface IUserEvent {
   _id: string | any;

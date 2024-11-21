@@ -105,7 +105,8 @@ const ModalCalendarDetails = () => {
         })
     }
 
-    const handleSubmit = (event: any) => {
+
+    const handleUpdateEvent = async (event: any) => {
         event.preventDefault();
 
         const memoStart = moment(start);
@@ -129,7 +130,7 @@ const ModalCalendarDetails = () => {
                 end: dateEnd,
             };
 
-            updateEvent(updatedEvent)
+            await updateEvent(updatedEvent)
             closeModalDetails();
         }
     };
@@ -170,7 +171,7 @@ const ModalCalendarDetails = () => {
                         {selectedEvent?.title.toUpperCase()}
                     </h1>
                     <hr className="mb-4" />
-                    <form className="container mx-auto" onSubmit={handleSubmit} autoComplete='off'>
+                    <form className="container mx-auto" autoComplete='off'>
                         <div className="mb-4">
                             <label className="text-sm mb-1 font-bold flex items-center justify-center">
                                 <span className='mr-2 text-2xl text-green-800'><MdOutlineEvent /></span>
@@ -244,8 +245,8 @@ const ModalCalendarDetails = () => {
                             }
                         </div>
                         <div className='grid grid-cols-2'>
-                            <Button
-                                type="submit" style={{ borderRadius: '5px' }}
+                            <Button onClick={handleUpdateEvent}
+                                style={{ borderRadius: '5px' }}
                                 className="w-full bg-green-700 text-white font-semibold py-2 rounded-lg flex items-center justify-center hover:bg-green-800 transition duration-200"
                             >
                                 <span className='mr-2 font-bold text-lg'><GrUpdate /></span>Actualizar Evento

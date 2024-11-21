@@ -1,5 +1,7 @@
 import cors from 'cors';
 import express, { Response, Request, NextFunction } from 'express';
+import http from 'http';
+import socketIo from 'socket.io';
 
 import { connectionWithDB } from "./src/config/databaseConnection";
 import { databaseName } from './database';
@@ -60,7 +62,29 @@ let portBackend: number = 7000;
 
 connectionWithDB(databaseName);
 
-const app: any = express();
+const app: express.Application = express();
+
+const server = http.createServer(app);
+
+const io = new socketIo.Server(server, {
+    cors: {
+        origin: originUrlFront,
+        methods: ['GET', 'POST', 'DELETE', 'PUT']
+    }
+});
+
+io.on('connection', (socket: any) => {
+
+    socket.emit('welcome', { msg: 'Hello from server' });
+
+    socket.on('sendEvent', (data: any)=>{
+        console.log(`Data sended sucessfull ${data}`);
+    });
+
+    socket.on('disconnect', () => {
+        console.log('A user disconnected');
+    });
+})
 
 app.use(express.json());
 
@@ -74,6 +98,6 @@ app.use((_req: Request, _res: Response, next: NextFunction) => {
 
 app.use('/api', BrowserRouter);
 
-app.listen(portBackend, (): void => {
-    console.info("Connect Express with port: " + portBackend);
-})
+server.listen(portBackend, (): void => {
+    console.info(`Connect Express with Socket.io on port: ${portBackend}`);
+});

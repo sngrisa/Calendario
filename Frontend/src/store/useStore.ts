@@ -38,16 +38,17 @@ const useStore = create<StoreState>((set, get) => ({
         }
 
         try {
-            const eventWithUser = {
+            const eventWithUser: ICalendarEvent = {
                 ...event,
-                user: { _id: user._id, name: user.username, email: user.email },
+                user: { _id: user._id, username: user.username, email: user.email },
             };
 
             const response = await postEvent(eventWithUser);
+
+            if (!response || !response.event) {return;}
+
             set((state) => ({ events: [...state.events, response.event] }));
-        } catch (err) {
-            console.error("Error adding event:", err);
-        }
+        } catch (err: any) { console.error(err); }
     },
     removeEvent: async (_id: string | number) => {
         try {
@@ -59,28 +60,42 @@ const useStore = create<StoreState>((set, get) => ({
             console.error("Error removing event:", err);
         }
     },
-    updateEvent: async (updatedEvent: ICalendarEvent) => {
+    updateEvent: async (event: ICalendarEvent) => {
+        const user = useUserLoginStore.getState().user;
+        if (!user || !user._id) {
+            console.error("User ID is missing!");
+            return;
+        }
+
         try {
-            const response = await putEvent(updatedEvent);
-            set((state) => ({
-                events: state.events.map((event: ICalendarEvent) =>
-                    event._id === updatedEvent._id ? response.event : event
-                )
-            }));
+            const eventWithUser: ICalendarEvent = {
+                ...event,
+                user: { _id: user._id, username: user.username, email: user.email },
+            };
+
+            console.log("Updating event:", eventWithUser);
+
+            const response = await putEvent(eventWithUser);
+
+            if (response.status === 200) {
+                set((state) => ({
+                    events: state.events.map(e => e._id === eventWithUser._id ? response.event : e),
+                }));
+            }
         } catch (err) {
             console.error("Error updating event:", err);
         }
     },
-    fetchEvents: async() => {
+    fetchEvents: async () => {
         const user = useUserLoginStore.getState().user;
-        if(!user){
+        if (!user) {
             console.error("User id not found");
             return;
         }
-        try{
+        try {
             const events = await getUserEventsById(user._id);
             set({ events: Array.isArray(events) ? events : [] });
-        } catch(err: any){
+        } catch (err: any) {
             console.error(err);
             set({ events: [] });
         }

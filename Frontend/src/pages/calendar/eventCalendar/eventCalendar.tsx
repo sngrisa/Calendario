@@ -1,9 +1,9 @@
 import { FaUser } from "react-icons/fa";
 import { MdEvent } from "react-icons/md";
 import "./eventCalendar.scss";
-import { IEventCalendar } from "../calendar";
+import { ICalendarEvent } from "../calendar";
 
-const EventCalendar = ({ event }: { event: IEventCalendar }) => {
+const EventCalendar = ({ event }: { event: ICalendarEvent }) => {
     const { title, user } = event;
 
     return (
@@ -15,7 +15,7 @@ const EventCalendar = ({ event }: { event: IEventCalendar }) => {
             {user && (
                 <div className="event-user">
                     <FaUser className="mr-2 text-2xl text-purple-950" />
-                    <strong>{user.name}</strong>
+                    <strong>{user.username}</strong>
                 </div>
             )}
         </div>
