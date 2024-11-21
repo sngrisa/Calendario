@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Events from "./../models/event.model";
 import Users from "./../models/user.model";
+import mongoose from "mongoose";
 
 const getEventById = async (req: Request, res: Response): Promise<Response> => {
     const { _id } = req.params;
@@ -16,20 +17,25 @@ const getEventById = async (req: Request, res: Response): Promise<Response> => {
 };
 
 
-
-const getEvents = async (_req: Request, res: Response): Promise<Response> => {
-    const { _id } = _req.body;
+const getEventsByIdUser = async (_req: Request, _res: Response): Promise<Response> => {
+    const { _id } = _req.params;
+    if (!_id) { 
+        return _res.status(400).json({ ok: false, msg: "ID of user not found" });
+    }
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+        return _res.status(400).json({ ok: false, msg: "Invalid user ID" });
+    }
     try {
-        const events = await Events.find({ user: _id }); 
-        if (events.length === 0) {
-            return res.status(404).json({
-                ok: false,
-                msg: "No events found for this user",
-            });
+        const events = await Events.find({ user: _id });
+
+        if (!events || events.length === 0) {
+            return _res.status(404).json({ ok: false, msg: "No events found for this user" });
         }
-        return res.status(200).json({ events });
-    } catch (err) {
-        return res.status(500).json({ ok: false, msg: err.message });
+
+        return _res.status(200).json({ ok: true, events });
+    } catch (e: any) {
+        console.error(e);
+        return _res.status(500).json({ ok: false, msg: "Server error" });
     }
 };
 
@@ -116,26 +122,21 @@ const updateEvent = async (_req: Request, _res: Response): Promise<Response> => 
 }
 
 const deleteEvent = async (_req: Request, _res: Response): Promise<Response> => {
-    const { eventId } = _req.params;
+    const { _id } = _req.params;
+    console.log(_id);
+    if (!_id) { 
+        return _res.status(400).json({ ok: false, msg: "ID of event not found" });
+    }
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+        return _res.status(400).json({ ok: false, msg: "Invalid event ID" });
+    }
     try {
-        const event = await Events.findByIdAndDelete(eventId);
-        if (!event) {
-            return _res.status(404).json({
-                ok: false,
-                msg: "Event not found",
-            });
-        }
-        return _res.status(200).json({
-            ok: true,
-            msg: "Event deleted from database",
-        });
-    } catch (err: any) {
-        return _res.status(500).json({
-            ok: false,
-            msg: "An error occurred while deleting the event",
-            error: err.message,
-        });
+        const events = await Events.findByIdAndDelete({ _id: _id });
+        return _res.status(200).json({ ok: true, events });
+    } catch (e: any) {
+        console.error(e);
+        return _res.status(500).json({ ok: false, msg: "Server error" });
     }
 };
 
-export { getEventById, getEvents, saveEvent, updateEvent, deleteEvent };
+export { getEventById, saveEvent, updateEvent, deleteEvent, getEventsByIdUser };

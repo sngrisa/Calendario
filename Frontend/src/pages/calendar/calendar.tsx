@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import moment from "moment";
 import "moment/locale/es";
-import { Calendar, Event, momentLocalizer } from "react-big-calendar";
+import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
 import { messages } from "../../lang/messages";
@@ -11,7 +11,6 @@ import ModalCalendar from "./modalCalendar/modalCalendar";
 import { useStore } from "../../store/useStore";
 import ModalCalendarDetails from "./modalCalendarDetails/modalCalendarDetails";
 import "./calendar.scss";
-import { useUserLoginStore } from "../../store/userLoginStore";
 
 moment.locale('es');
 const localizer = momentLocalizer(moment);
@@ -32,13 +31,11 @@ export interface ICalendarEvent {
 }
 
 const CalendarComponent = ({ toggleNavbarFooter }: { toggleNavbarFooter: any }) => {
-  const { openModalDetails, openModal, events, addEvent, fetchEvents } = useStore();
-  const { user } = useUserLoginStore();
+  const { openModalDetails, openModal, events, fetchEvents } = useStore();
   const [lastView, setLastView] = useState(localStorage.getItem('lastChange') || 'month');
 
   useEffect(() => {
     toggleNavbarFooter();
-    fetchEvents(user?._id);  
     return () => {
       toggleNavbarFooter();
     };
@@ -47,6 +44,8 @@ const CalendarComponent = ({ toggleNavbarFooter }: { toggleNavbarFooter: any }) 
   useEffect(() => {
     localStorage.setItem('events', JSON.stringify(events));
   }, [events]);
+
+  useEffect(()=>{fetchEvents();},[])
 
 
   const onHandledClick = () => {
@@ -81,7 +80,7 @@ const CalendarComponent = ({ toggleNavbarFooter }: { toggleNavbarFooter: any }) 
         <ModalCalendarDetails />
         <Calendar
           localizer={localizer}
-          events={events.map((event: any) => ({
+          events={(events).map((event: any) => ({
             ...event,
             start: new Date(event.start),
             end: new Date(event.end),

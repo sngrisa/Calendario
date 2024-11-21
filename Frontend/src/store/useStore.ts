@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { deleteEvent, getUserEvents, postEvent, putEvent } from '../services/events.service';
+import { deleteEvent, postEvent, putEvent, getUserEventsById } from '../services/events.service';
 import { useUserLoginStore } from './userLoginStore';
 import { ICalendarEvent } from '../pages/calendar/calendar';
 
@@ -12,9 +12,9 @@ interface StoreState {
     openModal: () => void;
     closeModal: () => void;
     addEvent: (event: ICalendarEvent) => void;
-    removeEvent: (_id: number) => void;
+    removeEvent: (_id: number | string) => void;
     updateEvent: (updatedEvent: ICalendarEvent) => void;
-    fetchEvents: (_id: string | number | undefined) => void,
+    fetchEvents: () => void,
     getEventsById: (_id: string | number) => ICalendarEvent[] | undefined[];
     openModalDetails: () => void;
     closeModalDetails: () => void;
@@ -71,18 +71,18 @@ const useStore = create<StoreState>((set, get) => ({
             console.error("Error updating event:", err);
         }
     },
-    fetchEvents: async(_id: string | number | undefined) => {
+    fetchEvents: async() => {
         const user = useUserLoginStore.getState().user;
-        if (!user || !user._id) {
-            console.error("User ID is missing!");
+        if(!user){
+            console.error("User id not found");
             return;
         }
-
-        try {
-            const events = await getUserEvents(user._id);
-            set({ events });
-        } catch (err) {
-            console.error("Error fetching events:", err);
+        try{
+            const events = await getUserEventsById(user._id);
+            set({ events: Array.isArray(events) ? events : [] });
+        } catch(err: any){
+            console.error(err);
+            set({ events: [] });
         }
     },
     getEventsById: (_id: string | number) => {

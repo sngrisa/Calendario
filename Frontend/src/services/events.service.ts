@@ -1,3 +1,4 @@
+import axios from "axios";
 import { ICalendarEvent } from "../pages/calendar/calendar";
 
 const url: string = "http://localhost:7000/api/events";
@@ -12,7 +13,6 @@ const handleResponse = async (response: Response) => {
 };
 
 const postEvent = async (event: any) => {
-    console.log(event);
     try {
         const response: Response = await fetch(`${url}`, {
             method: 'POST',
@@ -47,14 +47,9 @@ const putEvent = async (event: ICalendarEvent) => {
 }
 
 
-const deleteEvent = async (idEvent: string | number) => {
+const deleteEvent = async (_id: string | number | undefined): Promise<any> => {
     try {
-        const response: Response = await fetch(`${url}/${idEvent}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+        const response: Response = await axios.delete(`${url}/${_id}`);
         return handleResponse(response);
     } catch (err: any) {
         console.error('Error deleting event:', err);
@@ -62,41 +57,18 @@ const deleteEvent = async (idEvent: string | number) => {
     }
 };
 
-const getUserEvents = async (_id: string | number | undefined) => {
-    try {
-        const response = await fetch(`${url}/user/${_id}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error('Error fetching events');
-        }
-
-        const data = await response.json();
-        return data;
-    } catch (err) {
-        console.error('Error fetching events:', err);
-        throw err;
+const getUserEventsById = async(_id: string | number | undefined): Promise<any> =>{
+    if(!_id){
+        console.error('The _id of user is required');
+        return;
     }
-};
-
-const getEventsById = async (idEvent: string | number) => {
-    try {
-        const response: Response = await fetch(`${url}/${idEvent}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-
-        return handleResponse(response);
-    } catch (err: any) {
-        console.error('Error fetching event by ID:', err);
-        throw err;
+    try{
+        const response = await axios.get(`${url}/user/${_id}`);
+        return await response.data.events;
+    }catch(err: any){
+        console.error("Not events found by id User o other error found!!")
     }
-};
+}
 
-export { getUserEvents, postEvent, putEvent, deleteEvent, getEventsById };
+
+export { postEvent, putEvent, deleteEvent, getUserEventsById };

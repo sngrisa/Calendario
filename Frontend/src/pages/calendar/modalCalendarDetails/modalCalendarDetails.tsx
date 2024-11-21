@@ -45,7 +45,7 @@ Modal.setAppElement('#root');
 
 const ModalCalendarDetails = () => {
     const subtitleRef = useRef<any>();
-    const { isModalOpenDetails, closeModalDetails, selectedEvent, updateEvent } = useStore();
+    const { isModalOpenDetails, closeModalDetails, selectedEvent, updateEvent, removeEvent } = useStore();
     const now = moment().minute(0).seconds(0).add(1, 'hours');
     const nowPlus = now.clone().add(1, 'hours');
 
@@ -136,7 +136,7 @@ const ModalCalendarDetails = () => {
 
     const handleDeleteEvent = () => {
         if (selectedEvent) {
-            useStore.getState().removeEvent(selectedEvent._id);
+            removeEvent(String(useStore.getState().removeEvent(selectedEvent._id)));
             closeModalDetails();
         }
     };

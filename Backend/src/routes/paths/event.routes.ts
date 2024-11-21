@@ -1,17 +1,18 @@
 import express from "express";
 import { validateFields } from "../../helpers/ValidateFields";
 import { check } from "express-validator";
-import { saveEvent, getEventById, getEvents, updateEvent, deleteEvent } from "../../controllers/event.controller";
+import { saveEvent, getEventById, getEventsByIdUser, updateEvent, deleteEvent } from "../../controllers/event.controller";
 import { validateJWT } from "../../helpers/ValidateJWT";
 
 const EventsRouter = express.Router();
 
-EventsRouter.get('/', [validateFields, validateJWT], getEvents);
+EventsRouter.get('/user/:_id', [validateFields ], getEventsByIdUser);
 
-EventsRouter.get('/user/:_id', [
+EventsRouter.get('/users/:_id', [
     check('_id', 'The id is required').not().isEmpty(),
+    check('_id', 'The id must be a valid MongoDB ObjectId').isMongoId(),
     validateFields
-], getEvents);
+], getEventById);
 
 EventsRouter.post('/', [
     check('title', 'The title of Event is required').not().isEmpty(),
@@ -21,16 +22,14 @@ EventsRouter.post('/', [
     validateFields
 ], saveEvent);
 
-EventsRouter.delete('/:id', [
-    check('id', 'The id is required').not().isEmpty(),
-    check('id', 'The id must be a valid MongoDB ObjectId').isMongoId(),
+EventsRouter.delete('/:_id', [
+    check('_id', 'The id is required').not().isEmpty(),
     validateFields,
-    validateJWT
 ], deleteEvent);
 
-EventsRouter.put('/:id', [
-    check('id', 'The id is required').not().isEmpty(),
-    check('id', 'The id must be a valid MongoDB ObjectId').isMongoId(),
+EventsRouter.put('/:_id', [
+    check('_id', 'The id is required').not().isEmpty(),
+    check('_id', 'The id must be a valid MongoDB ObjectId').isMongoId(),
     validateFields,
     validateJWT
 ], updateEvent);
