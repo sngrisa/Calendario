@@ -7,6 +7,7 @@ import { connectionWithDB } from "./src/config/databaseConnection";
 import { databaseName } from './database';
 import { IPortFrontend } from './src/interfaces/portFrontend.interface';
 import BrowserRouter from './src/routes/indexRoutes';
+import Event from './src/models/event.model';
 
 let portsFrontend: IPortFrontend[] = [
     {
@@ -69,7 +70,8 @@ const server = http.createServer(app);
 const io = new socketIo.Server(server, {
     cors: {
         origin: originUrlFront,
-        methods: ['GET', 'POST', 'DELETE', 'PUT']
+        methods: ['GET', 'POST', 'DELETE', 'PUT'],
+        allowedHeaders: ['Content-Type'],
     }
 });
 
@@ -77,8 +79,40 @@ io.on('connection', (socket: any) => {
 
     socket.emit('welcome', { msg: 'Hello from server' });
 
-    socket.on('sendEvent', (data: any)=>{
-        console.log(`Data sended sucessfull ${data}`);
+    socket.on('getEvents', async () => {
+
+        const _id = socket.handshake.query._id;
+
+        if (!_id) {
+            console.error("User ID is required");
+            return socket.emit('getEvents', []);
+        }
+
+        try {
+            const events = await Event.find({ user: _id });
+
+            if (events.length === 0) {
+                console.log("No events found for user:", _id);
+                socket.emit('getEvents', []);
+                return;
+            }
+
+            socket.emit('getEvents', events);
+
+        } catch (error) {
+            console.error("Error fetching events:", error);
+            socket.emit('getEvents', []);
+        }
+    });
+
+    socket.on('addEvent', (newEvent) => {
+        console.log('New Event Received:', newEvent);
+        io.emit('newEvent', newEvent);
+    });
+
+    socket.on('deleteEvent', (_id) => {
+        console.log('New Event Received:', _id);
+        io.emit('deleteEvent', _id);
     });
 
     socket.on('disconnect', () => {
@@ -89,6 +123,8 @@ io.on('connection', (socket: any) => {
 app.use(express.json());
 
 app.use(cors({ origin: originUrlFront }));
+
+app.use(cors());
 
 app.use((_req: Request, _res: Response, next: NextFunction) => {
     _res.header('Access-Control-Allow-Origin', '*');

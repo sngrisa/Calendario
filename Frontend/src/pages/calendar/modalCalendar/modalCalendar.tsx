@@ -21,6 +21,7 @@ import { BiCalendarEvent } from "react-icons/bi";
 import { useUserLoginStore } from '../../../store/userLoginStore';
 import { useNavigate } from 'react-router';
 import { ICalendarEvent } from '../calendar';
+import { io } from 'socket.io-client';
 
 
 type ValuePiece = Date | any;
@@ -38,6 +39,7 @@ const customStyles = {
 };
 
 Modal.setAppElement('#root');
+const socketIo = io("http://localhost:7000");
 
 const ModalCalendar = () => {
     const subtitleRef = useRef<any>();
@@ -63,6 +65,14 @@ const ModalCalendar = () => {
 
     const { title, notes } = formValues;
 
+    useEffect(()=>{
+        socketIo.on('newEvent', (newEvent: ICalendarEvent)=>{
+            addEvent(newEvent);
+        })
+        return () => {
+            socketIo.off('newEvent');
+        };
+    },[addEvent]);
 
     const afterOpenModal = (): void => {
         if (subtitleRef.current) {
@@ -137,8 +147,7 @@ const ModalCalendar = () => {
                 email: user?.email,
             }
         };
-
-        addEvent(newEvent);
+        socketIo.emit('addEvent', newEvent);
         closeModal();
         setId(id + 1);
     };

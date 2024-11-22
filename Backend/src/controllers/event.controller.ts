@@ -108,7 +108,7 @@ const saveEvent = async (_req: Request, _res: Response): Promise<Response> => {
 
 const updateEvent = async (_req: Request, _res: Response): Promise<Response> => {
     const { _id } = _req.params;
-    const { title, notes, start, end } = _req.body;
+    const { title, notes, start, end, user } = _req.body;
 
     if (!_id) {
         if (!_res.headersSent) {
@@ -134,7 +134,8 @@ const updateEvent = async (_req: Request, _res: Response): Promise<Response> => 
         event.notes = notes || event.notes;
         event.start = start || event.start;
         event.end = end || event.end;
-
+        event.user = user || event.user;
+        
         await event.save();
 
         if (!_res.headersSent) {
@@ -171,10 +172,16 @@ const deleteEvent = async (_req: Request, _res: Response): Promise<Response> => 
     }
 
     try {
-        const events = await Events.findByIdAndDelete({ _id: _id });
+        const events = await Events.findByIdAndDelete(_id);
         
+        if (!events) {
+            if (!_res.headersSent) {
+                return _res.status(404).json({ ok: false, msg: "Event not found" });
+            }
+        }
+
         if (!_res.headersSent) {
-            return _res.status(200).json({ ok: true, events });
+            return _res.status(200).json({ ok: true, msg: "Event deleted successfully", events });
         }
     } catch (e: any) {
         if (!_res.headersSent) {
@@ -183,5 +190,6 @@ const deleteEvent = async (_req: Request, _res: Response): Promise<Response> => 
         }
     }
 };
+
 
 export { getEventById, saveEvent, updateEvent, deleteEvent, getEventsByIdUser };

@@ -37,7 +37,7 @@ const Login = ({ toggleNavbarFooter }: { toggleNavbarFooter: any }) => {
 
         localStorage.setItem("tokenUser", response.token);
         console.log(localStorage.getItem('tokenUser'));
-        login(response.token, { _id: response._id, name: response.name, email: response.email });
+        login(response.token, { _id: response._id, username: response.username, email: response.email });
 
         Swal.fire({
           position: "center",

@@ -2,8 +2,6 @@ import { IuserData } from "./interfaces/userData.interface";
 
 const url: string = "http://localhost:7000/api";
 
-let userDataDetails: any = {};
-
 const postUsers = async (userData: IuserData) => {
     try {
         const reponse: any = await fetch(`${url}/users`, {

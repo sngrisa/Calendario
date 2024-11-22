@@ -11,11 +11,11 @@ import { useStore } from "../../store/useStore";
 import ModalCalendarDetails from "./modalCalendarDetails/modalCalendarDetails";
 import "./calendar.scss";
 import { io } from 'socket.io-client';
+import { useUserLoginStore } from "../../store/userLoginStore";
 
 moment.locale('es');
+
 const localizer = momentLocalizer(moment);
-const urlBackend: string = "http://localhost:7000";
-const socketIo = io(urlBackend);
 
 export interface IUserEvent {
   _id: string | any;
@@ -33,8 +33,15 @@ export interface ICalendarEvent {
 }
 
 const CalendarComponent = ({ toggleNavbarFooter }: { toggleNavbarFooter: any }) => {
-  const { openModalDetails, openModal, events, fetchEvents } = useStore();
+  const { user } = useUserLoginStore();
+  const urlBackend: string = "http://localhost:7000";
+  const { openModalDetails, openModal, events, fetchEvents, setEvents } = useStore();
   const [lastView, setLastView] = useState(localStorage.getItem('lastChange') || 'month');
+  const socketIo = io(urlBackend, {
+    query: {
+      _id: user?._id,
+    },
+  });
 
   useEffect(() => {
     toggleNavbarFooter();
@@ -47,7 +54,17 @@ const CalendarComponent = ({ toggleNavbarFooter }: { toggleNavbarFooter: any }) 
     localStorage.setItem('events', JSON.stringify(events));
   }, [events]);
 
-  useEffect(()=>{fetchEvents();},[])
+  useEffect(() => {
+    socketIo.emit('getEvents');
+
+    socketIo.on('getEvents', (eventsReceived: ICalendarEvent[]) => {
+      setEvents(eventsReceived);
+    });
+
+    return () => {
+      socketIo.off('getEvents');
+    };
+  }, [setEvents]);
 
 
   const onHandledClick = () => {

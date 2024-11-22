@@ -85,7 +85,7 @@ const loginUsers = async (req: Request, res: Response): Promise<Response> => {
       msg: "Welcome User to the System",
       _id: dbUser.id,
       email: dbUser.email,
-      name: dbUser.username,
+      username: dbUser.username,
       token
     });
 

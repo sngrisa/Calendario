@@ -19,6 +19,7 @@ interface StoreState {
     openModalDetails: () => void;
     closeModalDetails: () => void;
     setSelectedEvent: (event: ICalendarEvent) => void;
+    setEvents: (events: ICalendarEvent[]) => void;
 }
 
 const useStore = create<StoreState>((set, get) => ({
@@ -56,28 +57,31 @@ const useStore = create<StoreState>((set, get) => ({
             set((state) => ({
                 events: state.events.filter((event: ICalendarEvent) => event._id !== _id)
             }));
+            return _id;
         } catch (err) {
             console.error("Error removing event:", err);
+            throw new Error("Failed to remove event");
         }
     },
+    
     updateEvent: async (event: ICalendarEvent) => {
         const user = useUserLoginStore.getState().user;
         if (!user || !user._id) {
             console.error("User ID is missing!");
             return;
         }
-
+    
         try {
             const eventWithUser: ICalendarEvent = {
                 ...event,
                 user: { _id: user._id, username: user.username, email: user.email },
             };
-
+    
             console.log("Updating event:", eventWithUser);
-
+    
             const response = await putEvent(eventWithUser);
-
-            if (response.status === 200) {
+    
+            if (response.status === 200 && response.event) {
                 set((state) => ({
                     events: state.events.map(e => e._id === eventWithUser._id ? response.event : e),
                 }));
@@ -104,7 +108,8 @@ const useStore = create<StoreState>((set, get) => ({
         const state = get();
         return state.events.filter(event => event.user._id === _id);
     },
-    setSelectedEvent: (event: ICalendarEvent) => set({ selectedEvent: event })
+    setSelectedEvent: (event: ICalendarEvent) => set({ selectedEvent: event }),
+    setEvents: (events: ICalendarEvent[]) => set({ events }) 
 }));
 
 export { useStore };

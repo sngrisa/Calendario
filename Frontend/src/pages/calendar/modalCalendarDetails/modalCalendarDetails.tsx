@@ -14,7 +14,9 @@ import "./modalCalendarDetails.scss";
 import { GrUpdate } from "react-icons/gr";
 import Swal from "sweetalert2";
 import { Button } from '../../../components/ui/button';
-import { IuserData } from '../../../services/interfaces/userData.interface';
+import { io } from 'socket.io-client';
+import { useUserLoginStore } from '../../../store/userLoginStore';
+import { getUsersByEmail } from '../../../services/users.service';
 
 
 type ValuePiece = Date | any;
@@ -22,9 +24,11 @@ type Value = ValuePiece | [ValuePiece, ValuePiece];
 type SweetAlertIcon = 'success' | 'error' | 'warning' | 'info' | 'question';
 
 export interface IEventCalendarModal {
+    _id: string | number;
     title: string;
     notes: string;
     start: Date;
+    user: string | number;
     end: Date;
 }
 
@@ -39,22 +43,27 @@ const customStyles = {
     }
 };
 
-let subtitle: any = "";
 
 Modal.setAppElement('#root');
+const socketIo = io("http://localhost:7000");
 
 const ModalCalendarDetails = () => {
+    const {user} = useUserLoginStore();
     const subtitleRef = useRef<any>();
-    const { isModalOpenDetails, closeModalDetails, selectedEvent, updateEvent, removeEvent } = useStore();
+    const { isModalOpenDetails, closeModalDetails, selectedEvent, updateEvent, removeEvent, setEvents } = useStore();
     const now = moment().minute(0).seconds(0).add(1, 'hours');
     const nowPlus = now.clone().add(1, 'hours');
+    
+    const findUsernameByEmail = async() =>{
+        return await getUsersByEmail(String(user?.email));
+    }
 
     const [date, setDate] = useState<Value>(now.toDate());
     const [dateEnd, setDateEnd] = useState<Value>(nowPlus.toDate());
     const [titleError, setTitleError] = useState<string | null>(null);
     const [notesError, setNotesError] = useState<string | null>(null);
 
-    const [formValues, setFormValues] = useState<IEventCalendarModal>({
+    const [formValues, setFormValues] = useState<any>({
         title: selectedEvent?.title || '',
         notes: selectedEvent?.notes || '',
         start: selectedEvent?.start || new Date(),
@@ -71,9 +80,40 @@ const ModalCalendarDetails = () => {
                 notes: selectedEvent.notes,
                 start: selectedEvent.start,
                 end: selectedEvent.end,
+                user: {
+                    _id: selectedEvent.user,
+                    email: selectedEvent.email,
+                    username: user?.username
+                }
             });
         }
     }, [selectedEvent]);
+
+/*     useEffect(() => {
+        socketIo.on('eventUpdated', (updatedEvent: ICalendarEvent) => {
+          // Actualizar los eventos en el estado del store
+          setEvents((prevEvents) => 
+            prevEvents.map((event) =>
+              event._id === updatedEvent._id ? updatedEvent : event
+            )
+          );
+        });
+    
+        // Limpiar el evento cuando el componente se desmonte
+        return () => {
+          socketIo.off('eventUpdated');
+        };
+      }, [setEvents]); */
+
+    useEffect(() => {
+        socketIo.on("removeEvent", (_id: number | string) => {
+            removeEvent(_id);
+        });
+
+        return () => {
+            socketIo.off("removeEvent");
+        };
+    }, [removeEvent]);
 
     const afterOpenModal = (): void => {
         if (subtitleRef.current) {
@@ -128,17 +168,23 @@ const ModalCalendarDetails = () => {
                 notes,
                 start: date,
                 end: dateEnd,
+                user: user
             };
-
+            socketIo.emit('updateEvent', updatedEvent);
             await updateEvent(updatedEvent)
             closeModalDetails();
         }
     };
 
-    const handleDeleteEvent = () => {
+    const handleDeleteEvent = async () => {
         if (selectedEvent) {
-            removeEvent(String(useStore.getState().removeEvent(selectedEvent._id)));
-            closeModalDetails();
+            try {
+                useStore.getState().removeEvent(selectedEvent._id);
+                socketIo.emit('removeEvent', selectedEvent._id);
+                closeModalDetails();
+            } catch (error) {
+                console.error("Error deleting event:", error);
+            }
         }
     };
 
